@@ -1,0 +1,252 @@
+version: "1.0"
+agent_id: "film-maker-agent"
+
+tables:
+  result_brand_templates:
+    description: "Reusable brand style, logo/image asset references, platform defaults, and generation settings."
+    writable: true
+    write_mode: upsert
+    columns:
+      template_id:
+        type: uuid
+        required: true
+      owner_id:
+        type: string
+        required: true
+        max_length: 255
+      template_name:
+        type: string
+        required: true
+        max_length: 255
+      brand_notes:
+        type: text
+      logo_asset_refs:
+        type: jsonb
+      default_platform:
+        type: string
+        max_length: 100
+      default_settings:
+        type: jsonb
+      created_at:
+        type: datetime
+        required: true
+      updated_at:
+        type: datetime
+        required: true
+    conflict_columns:
+      - template_id
+    indexes:
+      - columns: [owner_id]
+        name: idx_result_brand_templates_owner_id
+      - columns: [template_name]
+        name: idx_result_brand_templates_template_name
+  result_video_jobs:
+    description: "Main lifecycle record for each short-video generation request."
+    writable: true
+    write_mode: upsert
+    columns:
+      job_id:
+        type: uuid
+        required: true
+      requester_id:
+        type: string
+        required: true
+        max_length: 255
+      requester_channel:
+        type: string
+        required: true
+        max_length: 50
+      target_platform:
+        type: string
+        max_length: 100
+      template_id:
+        type: uuid
+      status:
+        type: string
+        required: true
+        max_length: 50
+      approval_required:
+        type: boolean
+        required: true
+      approved_at:
+        type: datetime
+      created_at:
+        type: datetime
+        required: true
+      updated_at:
+        type: datetime
+        required: true
+    conflict_columns:
+      - job_id
+    indexes:
+      - columns: [requester_id]
+        name: idx_result_video_jobs_requester_id
+      - columns: [requester_channel]
+        name: idx_result_video_jobs_requester_channel
+      - columns: [status]
+        name: idx_result_video_jobs_status
+      - columns: [target_platform]
+        name: idx_result_video_jobs_target_platform
+      - columns: [updated_at]
+        name: idx_result_video_jobs_updated_at
+  result_video_inputs:
+    description: Normalized prompt/script and production settings for the current job revision.
+    writable: true
+    write_mode: upsert
+    columns:
+      input_id:
+        type: uuid
+        required: true
+      job_id:
+        type: uuid
+        required: true
+      prompt:
+        type: text
+        required: true
+      script:
+        type: text
+      aspect_ratio:
+        type: string
+        max_length: 20
+      duration_seconds:
+        type: integer
+        required: true
+      music_preference:
+        type: string
+        max_length: 255
+      voiceover_text:
+        type: text
+      captions_required:
+        type: boolean
+        required: true
+      asset_refs:
+        type: jsonb
+      safety_notes:
+        type: text
+      created_at:
+        type: datetime
+        required: true
+    conflict_columns:
+      - job_id
+    indexes:
+      - columns: [job_id]
+        name: idx_result_video_inputs_job_id
+      - columns: [duration_seconds]
+        name: idx_result_video_inputs_duration_seconds
+  result_video_outputs:
+    description: "Generated video URLs/files, thumbnails, captions, provider metadata, and delivery timestamps."
+    writable: true
+    write_mode: upsert
+    columns:
+      output_id:
+        type: uuid
+        required: true
+      job_id:
+        type: uuid
+        required: true
+      provider_job_id:
+        type: string
+        max_length: 255
+      video_url:
+        type: text
+        required: true
+      thumbnail_url:
+        type: text
+      captions_url:
+        type: text
+      metadata:
+        type: jsonb
+      delivered_at:
+        type: datetime
+      created_at:
+        type: datetime
+        required: true
+    conflict_columns:
+      - output_id
+    indexes:
+      - columns: [job_id]
+        name: idx_result_video_outputs_job_id
+      - columns: [provider_job_id]
+        name: idx_result_video_outputs_provider_job_id
+      - columns: [delivered_at]
+        name: idx_result_video_outputs_delivered_at
+  result_status_logs:
+    description: "Append-style status and error log events for troubleshooting and audit."
+    writable: true
+    write_mode: insert
+    columns:
+      log_id:
+        type: uuid
+        required: true
+      job_id:
+        type: uuid
+        required: true
+      level:
+        type: string
+        required: true
+        max_length: 20
+      status:
+        type: string
+        max_length: 50
+      message:
+        type: text
+        required: true
+      details:
+        type: jsonb
+      created_at:
+        type: datetime
+        required: true
+    conflict_columns:
+      - log_id
+    indexes:
+      - columns: [job_id]
+        name: idx_result_status_logs_job_id
+      - columns: [level]
+        name: idx_result_status_logs_level
+      - columns: [status]
+        name: idx_result_status_logs_status
+      - columns: [created_at]
+        name: idx_result_status_logs_created_at
+  result_user_feedback:
+    description: "Human approvals, rejections, revision requests, ratings, comments, and aspirational engagement targets."
+    writable: true
+    write_mode: upsert
+    columns:
+      feedback_id:
+        type: uuid
+        required: true
+      job_id:
+        type: uuid
+        required: true
+      output_id:
+        type: uuid
+      reviewer_id:
+        type: string
+        required: true
+        max_length: 255
+      decision:
+        type: string
+        required: true
+        max_length: 50
+      rating:
+        type: integer
+      engagement_target:
+        type: integer
+      comments:
+        type: text
+      created_at:
+        type: datetime
+        required: true
+    conflict_columns:
+      - feedback_id
+    indexes:
+      - columns: [job_id]
+        name: idx_result_user_feedback_job_id
+      - columns: [output_id]
+        name: idx_result_user_feedback_output_id
+      - columns: [reviewer_id]
+        name: idx_result_user_feedback_reviewer_id
+      - columns: [decision]
+        name: idx_result_user_feedback_decision
+      - columns: [created_at]
+        name: idx_result_user_feedback_created_at

@@ -1,0 +1,46 @@
+{
+  "name": "film-maker-agent",
+  "version": "1.0.0",
+  "description": "On-demand Slack and Email text-to-video draft generation with safety validation, Sora-compatible video generation, persistence, delivery, feedback, and human approval.",
+  "agent_metadata": {
+    "agent_name": "film-maker-agent",
+    "agent_id": "film-maker-agent",
+    "avatar": "🎬",
+    "tone": "Helpful, creative, concise, and production-minded.",
+    "domain": "Short-form text-to-video generation for social media marketing, product ads, and audience engagement.",
+    "primary_users": "Social media managers, product marketers, founders, small business owners, brand reviewers, and creative operators.",
+    "automation_type": "conversational"
+  },
+  "skills": [
+    "data-writer",
+    "result-query",
+    "github-action",
+    "parse-video-request",
+    "process-email-message",
+    "validate-policy-and-spec",
+    "prepare-generation-prompt",
+    "submit-video-generation",
+    "check-generation-status",
+    "send-email-notification",
+    "record-review-feedback"
+  ],
+  "workflows": {
+    "main": "workflows/main.yaml"
+  },
+  "cron": {},
+  "env": {
+    "required": [
+      "PG_CONNECTION_STRING",
+      "DATABASE_URL",
+      "ORG_ID",
+      "AGENT_ID",
+      "RUN_ID",
+      "PROJECT_ROOT",
+      "SORA_API_KEY",
+      "SORA_API_BASE_URL",
+      "SLACK_BOT_TOKEN",
+      "EMAIL_INBOUND_TOKEN",
+      "EMAIL_SMTP_TOKEN"
+    ]
+  }
+}

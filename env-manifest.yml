@@ -1,0 +1,63 @@
+infrastructure:
+  - key: PG_CONNECTION_STRING
+    label: PostgreSQL connection string
+    required: true
+    secret: true
+  - key: DATABASE_URL
+    label: Database URL used by runtime skills
+    required: true
+    secret: true
+  - key: ORG_ID
+    label: Organization ID for schema isolation
+    required: true
+    secret: false
+  - key: AGENT_ID
+    label: Agent ID for schema isolation
+    required: true
+    secret: false
+  - key: RUN_ID
+    label: Workflow run identifier
+    required: true
+    secret: false
+  - key: PROJECT_ROOT
+    label: OpenClaw project root path
+    required: true
+    secret: false
+connector:
+  - key: GITHUB_TOKEN
+    label: GitHub token for PR sync
+    required: false
+    secret: true
+  - key: GITHUB_OWNER
+    label: GitHub repository owner
+    required: false
+    secret: false
+  - key: AGENT_REPO_NAME
+    label: Agent repository name
+    required: false
+    secret: false
+  - key: SORA_API_KEY
+    label: "Sora-compatible text-to-video API key"
+    required: true
+    secret: true
+  - key: SORA_API_BASE_URL
+    label: "Sora-compatible text-to-video API base URL"
+    required: true
+    secret: false
+  - key: EMAIL_API_BASE_URL
+    label: Email API base URL for outbound sends
+    required: false
+    secret: false
+channel:
+  - key: SLACK_BOT_TOKEN
+    label: Slack bot token
+    required: true
+    secret: true
+  - key: EMAIL_INBOUND_TOKEN
+    label: Inbound email authentication token
+    required: true
+    secret: true
+  - key: EMAIL_SMTP_TOKEN
+    label: Outbound email SMTP/API token
+    required: true
+    secret: true

@@ -1,0 +1,56 @@
+version: 1
+name: main
+steps:
+  - id: data-writer
+    type: skill
+    skill: data-writer
+  - id: process_email_message
+    type: skill
+    skill: process-email-message
+  - id: parse_video_request
+    type: skill
+    skill: parse-video-request
+  - id: validate_policy_and_spec
+    type: skill
+    skill: validate-policy-and-spec
+    depends_on: [parse_video_request]
+  - id: request_clarification_slack
+    type: native-tool
+    tool: message
+    depends_on: [validate_policy_and_spec]
+  - id: request_clarification_email
+    type: skill
+    skill: send-email-notification
+    depends_on: [validate_policy_and_spec]
+  - id: prepare_generation_prompt
+    type: skill
+    skill: prepare-generation-prompt
+    depends_on: [validate_policy_and_spec]
+  - id: submit_video_generation
+    type: skill
+    skill: submit-video-generation
+    depends_on: [prepare_generation_prompt]
+  - id: check_generation_status
+    type: skill
+    skill: check-generation-status
+    depends_on: [submit_video_generation]
+  - id: deliver_draft_slack
+    type: native-tool
+    tool: message
+    depends_on: [check_generation_status]
+  - id: deliver_draft_email
+    type: skill
+    skill: send-email-notification
+    depends_on: [check_generation_status]
+  - id: record_review_feedback
+    type: skill
+    skill: record-review-feedback
+    depends_on: [check_generation_status]
+  - id: deliver_approved_slack
+    type: native-tool
+    tool: message
+    depends_on: [record_review_feedback]
+  - id: deliver_approved_email
+    type: skill
+    skill: send-email-notification
+    depends_on: [record_review_feedback]
